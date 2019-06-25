@@ -1,6 +1,6 @@
 var app = angular.module("scoreboard", []);
 
-app.controller("scoreboardController", ['$scope', function($scope) {
+app.controller("scoreboardController", ['$scope', 'PlayerService', 'LeagueService', function ($scope, PlayerService, LeagueService) {
 
     $scope.players = [
         { id: 1, name: "Justin" },
@@ -47,11 +47,46 @@ app.controller("scoreboardController", ['$scope', function($scope) {
             // CLEAR THE FIELDS.
             $scope.name = '';
         }
-
     }
-    
+
+    var addLeagueByParams = function (result) {
+        // LeagueService
+        LeagueService.addLeague($scope.league, result)
+    }
+
+    var addLeagues = function () {
+        // LOAD AND CALCULATE EXSTING DATA FROM RESULT ARRAY
+        for (var i = 0; i < $scope.results.length; i++) {
+            addLeagueByParams($scope.results[i])
+        }
+    }
+    // // INITIALIZE THE ARRAY
+    addLeagues()
+}]);
+
+
+app.service('LeagueService', ['PlayerService', function (PlayerService) { 
+
+    this.addLeague = function (league,result) {
+        // GET WINNER NAME
+        name = PlayerService.comparePlayersScore(result)
+        let existing_player =league.find(e => e.name == name)
+        // DETERMINE ADD NEW RECORD OR ADD SCORE TO EXSITING NAME
+        if (existing_player != undefined) {
+            existing_player.score += 2
+        } else {
+            league.push({ name: name, score: 2 });
+        }
+        return league.sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+    }
+}]);
+
+
+
+app.service('PlayerService', function () {
     // RETURN WINNER NAME
-    var comparePlayersScore = function (result) {
+    this.comparePlayersScore = function (result) {
+        console.log('PlayerService' + JSON.stringify(result))
         if (result.score_1 < 0 || result.score_2 < 0) {
             // console.log("wrong input");
         }
@@ -87,28 +122,4 @@ app.controller("scoreboardController", ['$scope', function($scope) {
             }
         }
     };
-
-    var addLeagueByParams = function (result) {
-        // GET WINNER NAME
-        name = comparePlayersScore(result)
-        // $scope.comparePlayersScore(result).then(function (name) {
-        let existing_player = $scope.league.find(e => e.name == name)
-        // DETERMINE ADD NEW RECORD OR ADD SCORE TO EXSITING NAME
-        if (existing_player != undefined) {
-            existing_player.score += 2
-        } else {
-            $scope.league.push({ name: name, score: 2 });
-        }
-        // })
-        $scope.league.sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
-    }
-
-    var addLeagues = function () {
-        // LOAD AND CALCULATE EXSTING DATA FROM RESULT ARRAY
-        for (var i = 0; i < $scope.results.length; i++) {
-            addLeagueByParams($scope.results[i])
-        }
-    }
-    // INITIALIZE THE ARRAY
-    addLeagues();
-}]);
+});
