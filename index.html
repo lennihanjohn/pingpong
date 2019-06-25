@@ -49,7 +49,8 @@
 
                     <h2>Add Result</h2>
 
-                    <form name="myForm">
+                    <!-- <form name="myForm"> -->
+                    <form name="myForm" novalidate ng-submit="myForm.$valid && addResult(result)">
 
                         <table>
                             <thead>
@@ -60,24 +61,38 @@
                             </thead>
                             <tr>
                                 <td>
-                                    <select name="repeatSelect" id="repeatSelect" ng-model="result.player_1">
+                                    <select name="repeatSelect" id="repeatSelect" ng-model="result.player_1" required>
                                         <option ng-repeat="option in players" value="{{option.name}}">{{option.name}}</option>
                                     </select>
+                                    <div ng-messages="myForm.result.player_1.$error" ng-if="myForm.$submitted">
+                                        <div ng-message="required">Please select.</div>
+                                    </div>
                                 </td>
                                 <td class="score-1">
-                                    <input type="number" ng-model="result.score_1">
+                                    <input type="number" ng-model="result.score_1" min="0" required>
+                                    <div ng-messages="myForm.result.score_1.$error" ng-if="myForm.$submitted">
+                                        <div ng-message="required">Please select number.</div>
+                                    </div>
                                 </td>
                                 <td class="dash">-</td>
                                 <td class="score-2">
-                                    <input type="number" ng-model="result.score_2">
+                                    <input type="number" ng-model="result.score_2" min="0"required>
+                                    <div ng-messages="myForm.result.score_2.$error" ng-if="myForm.$submitted">
+                                        <div ng-message="required">Please select number.</div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <select name="repeatSelect" id="repeatSelect" ng-model="result.player_2">
+                                    <select name="repeatSelect" id="repeatSelect" ng-model="result.player_2" required>
                                         <option ng-repeat="option in players" value="{{option.name}}">{{option.name}}</option>
                                     </select>
+                                    <div ng-messages="myForm.result.player_2.$error" ng-if="myForm.$submitted">
+                                        <div ng-message="required">Please select.</div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <button ng-click="addResult(result)">Add</button>
+                                        <button type="submit">add</button>
+
+                                    <!-- <button ng-click="addResult(result)">Add</button> -->
                                 </td>
                             </tr>
                         </table>
@@ -91,10 +106,12 @@
             <hr/>
 
             <div>
-
                 <h2>Add Player</h2>
+                <input type="text" ng-model="name">
+                <button ng-click="addPlayer()">Add</button>
 
             </div>
+
 
             <hr/>
 
